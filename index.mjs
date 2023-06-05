@@ -3,13 +3,23 @@ import express, { query } from "express";
 import mysql from "mysql";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 dotenv.config();
+import cors from "cors";
 
 const app = express();
-const PORT = 3000;
+const PORT = 5001;
+// app.use(bodyParser.json());
+app.use(express.json());
+app.use(cookieParser());
 
-app.use(bodyParser.json());
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "*"],
+    credentials: true,
+  })
+);
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -72,6 +82,7 @@ app.post("/api/v1/signup", async (req, res) => {
 app.post("/api/v1/login", async (req, res) => {
   try {
     let body = req.body;
+    console.log(body.password);
     if (!body.email || !body.password)
       throw new Error("All Fields Are Required");
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -85,13 +96,13 @@ app.post("/api/v1/login", async (req, res) => {
       "SELECT * FROM users WHERE email = ?",
       [body.email],
       async (err, rows, fields) => {
-        if (err) {
-          if (rows.length < 0) {
-            res.status(400).send({ message: "Email not Found" });
-            return;
-          }
+        console.log("rows", rows);
+        if (rows.length === 0) {
+          res.status(400).send({ message: "Email not Found" });
           return;
         }
+
+        console.log("pass", rows[0].password);
         let isMatch = await bcrypt.compare(body.password, rows[0].password);
         if (!isMatch) {
           res.status(400).send({ message: "Wrong Password" });
@@ -111,7 +122,7 @@ app.post("/api/v1/login", async (req, res) => {
             data: {
               username: rows[0].username,
               email: rows[0].email,
-              // password: rows[0].password,
+              password: rows[0].password,
               token,
             },
           });
@@ -120,7 +131,7 @@ app.post("/api/v1/login", async (req, res) => {
       }
     );
   } catch (error) {
-    res.status(400).send("error");
+    res.status(400).send({ message: `${error.message}` });
   }
 });
 // ======= //
