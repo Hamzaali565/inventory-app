@@ -134,6 +134,66 @@ app.post("/api/v1/login", async (req, res) => {
     res.status(400).send({ message: `${error.message}` });
   }
 });
+
+app.post("/api/v1/addventory", async (req, res) => {
+  try {
+    let body = req.body;
+    if (
+      !body.itemName ||
+      !body.costPrice ||
+      !body.sellingPrice ||
+      !body.quantity
+    ) {
+      res.status(400).send({ message: "All parameters Are required" });
+      console.log("Error: All parameters are required");
+      return;
+    }
+    let set = connection.query(
+      "INSERT INTO addventory SET ?",
+      {
+        itemName: body.itemName,
+        costPrice: body.costPrice,
+        sellingPrice: body.sellingPrice,
+        quantity: body.quantity,
+        // id: body.id,
+      },
+      (err, result) => {
+        if (!err) {
+          res.status(200).send({ message: "data inserted Succesfully" });
+          console.log("result", result);
+          return;
+        }
+        if (err) {
+          res.status(400).send({ message: "data not inserted Succesfully" });
+          console.log("err", err);
+          return;
+        }
+      }
+    );
+  } catch (error) {
+    res.status(400).send({ message: "server error" });
+  }
+});
+
+app.get("/api/v1/getventory", async (req, res) => {
+  try {
+    let response = connection.query(
+      "SELECT * FROM addventory",
+      (err, rows, fields) => {
+        if (!err) {
+          res.status(200).send({ data: rows });
+          return;
+        }
+        if (err) {
+          res.status(400).send({ message: "error" });
+          return;
+        }
+      }
+    );
+  } catch (error) {
+    res.status(400).send({ message: "Server Error" });
+  }
+});
 // ======= //
 connection.connect((err) => {
   if (err) console.log(`Database connection failed ${err}`);
