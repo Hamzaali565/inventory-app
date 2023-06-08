@@ -194,6 +194,33 @@ app.get("/api/v1/getventory", async (req, res) => {
     res.status(400).send({ message: "Server Error" });
   }
 });
+
+app.delete("/api/v1/delventory/:id", async (req, res) => {
+  try {
+    let body = req.params;
+    if (!body?.id) {
+      res.status(400).send({ message: `Invalid Delete Request` });
+      return;
+    }
+
+    // throw new Error("Invalid Delete Request");
+    let deletes = connection.query(
+      "DELETE FROM addventory WHERE id = ?",
+      [body?.id],
+      async (err, result) => {
+        if (err) {
+          res.status(400).send({ message: `Request failed` });
+          return;
+        }
+        res.status(200).send({ message: "Deleted Successfully" });
+        console.log(result);
+      }
+    );
+  } catch (error) {
+    res.status(400).send({ message: `${error}` });
+    console.log("error");
+  }
+});
 // ======= //
 connection.connect((err) => {
   if (err) console.log(`Database connection failed ${err}`);

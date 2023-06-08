@@ -7,16 +7,14 @@ import Auto from "./components/autocomplete/Auto";
 import AddInput from "./components/AddInput/AddInput";
 import Header from "./components/header/Header";
 import MainPage from "./screens/MainPage/MainPage";
+import NestedModal from "./components/Modal/Modal";
 
 function App() {
   return (
     <div>
-      {/* <LoginScreen /> */}
-      {/* <Auto /> */}
-      {/* <AddInput /> */}
       <Header />
       <MainPage />
-      {/* <Table /> */}
+      {/* <NestedModal /> */}
     </div>
   );
 }

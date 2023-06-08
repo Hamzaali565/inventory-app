@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import { AiFillDelete } from "react-icons/ai";
 import { BiEditAlt } from "react-icons/bi";
+import NestedModal from "../../components/Modal/Modal";
 
 const MainPage = () => {
   const [itemName, setItemName] = useState("");
@@ -14,6 +15,8 @@ const MainPage = () => {
   const [quantity, setQty] = useState("");
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
+  const [open, setOpen] = React.useState(false);
+
   useEffect(() => {
     GetTables();
   }, [!toggle]);
@@ -39,7 +42,9 @@ const MainPage = () => {
       // setItemName("");
       // setPrice("");
       // setQty("");
-    } catch (error) {}
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   const GetTables = async () => {
@@ -48,10 +53,38 @@ const MainPage = () => {
     });
     setData(response.data.data);
   };
+  const Edits = () => {
+    console.log("Edit");
+  };
+  const Deletes = async (id) => {
+    console.log("id", id);
+    try {
+      let response = await axios.delete(
+        `http://localhost:5001/api/v1/delventory/${id}`,
+        { withCredentials: true }
+      );
+      console.log("response", response);
+      setToggle(!toggle);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   const handleInputChange = (event) => {
     setQty(event.target.value);
     console.log(event.target.value);
   };
+  const handleOpen = (item) => {
+    setOpen(true);
+    setItemName(item.itemName);
+    setPrice(item.sellingPrice);
+    setQty(item.quantity);
+    setCostPrice(item.costPrice);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <div>
       <div className="my-3 font-semibold text-2xl flex justify-center lg:justify-start lg:ml-4">
@@ -69,14 +102,6 @@ const MainPage = () => {
             setItemName(v);
           }}
         />
-        {/* <input
-          type="number"
-          onChange={(e) => {
-            console.log(e.target.value);
-          }}
-          name=""
-          id=""
-        /> */}
         <AddInput
           placeholder="Item Cost Price"
           type="number"
@@ -137,10 +162,18 @@ const MainPage = () => {
                 <td>{item.itemName}</td>
                 <td>{item.sellingPrice}</td>
                 <td>{item.sellingPrice}</td>
-                <td>
+                <td
+                  onClick={() => {
+                    handleOpen(item);
+                  }}
+                >
                   <BiEditAlt />
                 </td>
-                <td>
+                <td
+                  onClick={() => {
+                    Deletes(item?.id);
+                  }}
+                >
                   <AiFillDelete />
                 </td>
                 {/* <td>{item.sellingPrice}</td> */}
@@ -150,6 +183,14 @@ const MainPage = () => {
           </tbody>
         </table>
       </div>
+      <NestedModal
+        open={open}
+        onClickCencel={handleClose}
+        itemValue={itemName}
+        priceValue={sellingPrice}
+        quantityValue={quantity}
+        costValue={costPrice}
+      />
     </div>
   );
 };
