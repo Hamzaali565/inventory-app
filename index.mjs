@@ -142,7 +142,8 @@ app.post("/api/v1/addventory", async (req, res) => {
       !body.itemName ||
       !body.costPrice ||
       !body.sellingPrice ||
-      !body.quantity
+      !body.quantity ||
+      !body.model
     ) {
       res.status(400).send({ message: "All parameters Are required" });
       console.log("Error: All parameters are required");
@@ -155,6 +156,7 @@ app.post("/api/v1/addventory", async (req, res) => {
         costPrice: body.costPrice,
         sellingPrice: body.sellingPrice,
         quantity: body.quantity,
+        model: body.model,
         // id: body.id,
       },
       (err, result) => {
@@ -219,6 +221,106 @@ app.delete("/api/v1/delventory/:id", async (req, res) => {
   } catch (error) {
     res.status(400).send({ message: `${error}` });
     console.log("error");
+  }
+});
+
+app.put("/api/v1/updateventory", async (req, res) => {
+  try {
+    let { itemName, costPrice, sellingPrice, quantity, model, id } = req.body;
+    if (![itemName, costPrice, sellingPrice, quantity, model].every(Boolean)) {
+      res.status(400).send({ message: "all parameters are required" });
+      return;
+    }
+    let update = connection.query(
+      "UPDATE addventory SET ? WHERE id = ?",
+      [{ itemName, costPrice, sellingPrice, quantity, model }, id],
+      (err, result) => {
+        if (err) {
+          res.status(400).send({ message: "error while updating data" });
+          return;
+        }
+        if (result) {
+          if (result.affectedRows < 1) {
+            res.status(400).send({ message: "data not found" });
+            return;
+          } else {
+            res.status(200).send({ message: "data updated successfully" });
+            return;
+          }
+        }
+      }
+    );
+  } catch (error) {
+    res.status(400).send({ message: "server error" });
+    console.log("err", error);
+  }
+});
+
+app.post("/api/v1/addBilling", async (req, res) => {
+  try {
+    const { data, totalPrice } = req.body;
+    const { itemName, price, quantity } = data[0];
+    // console.log(data[0].itemName);
+    if (![itemName, price, quantity, totalPrice].every(Boolean)) {
+      res.status(400).send({ message: "parameters are missing" });
+      return;
+    }
+    let AddBilling = connection.query(
+      "INSERT INTO billing SET ?",
+      { data: JSON.stringify(data), totalPrice },
+      (err, result) => {
+        console.log(result);
+        if (!err) {
+          res
+            .status(200)
+            .send({
+              message: "data inserted Succesfully",
+              id: result.insertId,
+            });
+          // console.log("result", result);
+          return;
+        }
+        if (err) {
+          res.status(400).send({ message: "data not inserted Succesfully" });
+          console.log("err", err);
+          return;
+        }
+      }
+    );
+  } catch (error) {
+    res.status(400).send({ message: "server Error" });
+  }
+});
+
+app.get("/api/v1/getbill/:id", async (req, res) => {
+  try {
+    const { id } = req.params.id;
+    if (!req.params.id) {
+      res.status(400).send({ message: "required parameters are missing" });
+      return;
+    }
+    let response = connection.query(
+      "SELECT * FROM billing WHERE id = ?",
+      [req.params.id],
+      async (err, rows, fields) => {
+        if (rows.length === 0) {
+          res.status(400).send({ message: "no data found with this id" });
+          return;
+        }
+        console.log(JSON.parse(rows[0].data));
+        res.status(200).send({
+          data: JSON.parse(rows[0].data),
+          id: rows[0].id,
+          createdTime: rows[0].createdTime,
+          totalPrice:
+            rows[0].totalPrice == ""
+              ? (rows[0].totalPrice = 0)
+              : rows[0].totalPrice,
+        });
+      }
+    );
+  } catch (error) {
+    res.status(400).send({ message: "server Error" });
   }
 });
 // ======= //

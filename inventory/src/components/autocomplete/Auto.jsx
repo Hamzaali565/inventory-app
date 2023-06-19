@@ -2,7 +2,15 @@ import React from "react";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import { TextField } from "@mui/material";
 
-const Auto = ({ options, id, onChange, onInputChange, defaultValue }) => {
+const Auto = ({
+  options,
+  id,
+  onChange,
+  onInputChange,
+  defaultValue,
+  className,
+  value,
+}) => {
   const data = [
     { city: "lahore" },
     { city: "lahore" },
@@ -12,13 +20,13 @@ const Auto = ({ options, id, onChange, onInputChange, defaultValue }) => {
   return (
     <div className="flex justify-center mt-2">
       <Autocomplete
-        className="w-72 lg:w-40"
+        className={`${className ? className : "w-72"} lg:w-40 `}
         disablePortal
         id={id}
         onInputChange={onInputChange}
         options={options}
         onChange={onChange}
-        // value={value}
+        value={value}
         // defaultValue={defaultValue}
         sx={{
           borderColor: "black",
