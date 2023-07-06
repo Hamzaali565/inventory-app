@@ -15,12 +15,15 @@ function Bill() {
   const [quantity, setQuantity] = useState("");
   const [id, setId] = useState("");
   const [billId, setBillId] = useState("");
+  const [show, setShow] = useState(false);
 
   const [data, setData] = useState([]);
   const itemRefs = useRef([]);
 
   // const [itemsa] = useState(initialItems);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [totalProfit, setTotalProfit] = useState(0);
+  const [totalCost, setTotalCost] = useState(0);
 
   const [items, setItems] = useState([
     { itemName: "", price: "", quantity: "" },
@@ -45,11 +48,12 @@ function Bill() {
         totalProfit += itemProfit;
       } else {
         const itemProfit = price * quantity;
-        totalProfit += itemProfit;
+        totalProfit += itemProfit.toString();
       }
     });
 
     console.log("Profit:", totalProfit);
+    setTotalProfit(totalProfit);
   };
 
   const calculateTotalPrice = () => {
@@ -60,6 +64,24 @@ function Bill() {
       total += price * quantity;
     });
     setTotalPrice(total);
+  };
+
+  const calculateTotalCost = () => {
+    let totalCost = 0;
+
+    items.forEach((item1) => {
+      const matchingItem2 = data.find((item2) => item2.id === item1.id);
+
+      if (matchingItem2) {
+        const costPrice = parseFloat(matchingItem2.costPrice);
+        const quantity = parseInt(item1.quantity);
+        const itemCost = costPrice * quantity;
+        totalCost += itemCost;
+      }
+    });
+
+    console.log("Total Cost:", totalCost);
+    setTotalCost(totalCost);
   };
 
   const allData = async () => {
@@ -205,7 +227,37 @@ function Bill() {
           </div>
         </div>
       </div>
-      <div className="">hamza</div>
+      <div className="flex justify-center mt-4">
+        <div className="border-4 w-72 p-2">
+          <div className="flex justify-center">
+            <div
+              className=" font-bold cursor-pointer"
+              onClick={() => {
+                setShow(!show);
+                calculateProfit();
+                calculateTotalCost();
+                calculateTotalPrice();
+                console.log("items.length", items.length);
+              }}
+            >
+              {show ? "Hide Details" : "Show Detail"}
+            </div>
+            {/* <div></div> */}
+          </div>
+          <div className={` ${show ? "flex" : "hidden"} justify-between`}>
+            <div className="font-bold">Cost </div>
+            <div>{totalCost}</div>
+          </div>
+          <div className={` ${show ? "flex" : "hidden"} justify-between`}>
+            <div className="font-bold">Sell</div>
+            <div>{totalPrice}</div>
+          </div>
+          <div className={` ${show ? "flex" : "hidden"} justify-between`}>
+            <div className="font-bold">Profit</div>
+            <div>{totalProfit}</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

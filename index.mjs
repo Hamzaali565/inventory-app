@@ -271,12 +271,10 @@ app.post("/api/v1/addBilling", async (req, res) => {
       (err, result) => {
         console.log(result);
         if (!err) {
-          res
-            .status(200)
-            .send({
-              message: "data inserted Succesfully",
-              id: result.insertId,
-            });
+          res.status(200).send({
+            message: "data inserted Succesfully",
+            id: result.insertId,
+          });
           // console.log("result", result);
           return;
         }
