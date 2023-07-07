@@ -5,6 +5,7 @@ import { AiFillDelete } from "react-icons/ai";
 import { BiEditAlt } from "react-icons/bi";
 import NestedModal from "../../components/Modal/Modal";
 import Header from "../../components/header/Header";
+import { useSelector } from "react-redux";
 
 const MainPage = () => {
   const [itemName, setItemName] = useState("");
@@ -17,6 +18,9 @@ const MainPage = () => {
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
   const [open, setOpen] = React.useState(false);
+
+  const url = useSelector((state) => state.url);
+  console.log("uuuu", url);
 
   useEffect(() => {
     GetTables();
@@ -46,7 +50,7 @@ const MainPage = () => {
         }
       );
       console.log("response", response);
-      if (response) setToggle(!toggle);
+      setToggle(!toggle);
       Empty();
     } catch (error) {
       console.log("error", error);

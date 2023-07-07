@@ -6,7 +6,13 @@ import Login from "../../components/loginPage/Login";
 import { Formik, ErrorMessage, Field, Form, useFormik } from "formik";
 import axios from "axios";
 import * as Yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoginToggle } from "../../store/action";
 const LoginScreen = () => {
+  const Dispatch = useDispatch();
+  // const Selector = useSelector();
+  const check = useSelector((state) => state.toggle);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -37,8 +43,11 @@ const LoginScreen = () => {
         }
       );
       console.log("responce", responce);
+      Dispatch(setLoginToggle(true));
+      console.log(check);
     } catch (error) {
       console.log("err", error);
+      console.log(check);
     }
   };
   return (

@@ -1,12 +1,17 @@
 import React from "react";
 import img from "../../assets/images/inv.png";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { setLoginToggle } from "../../store/action";
 const Header = () => {
   let navigate = useNavigate();
+  const url = useSelector((state) => state.url);
+  const Dispatch = useDispatch();
   let path;
   const Home = () => {};
   const addVentory = () => {
-    path = "/";
+    path = "/mainpage";
     navigate(path);
   };
   const billings = () => {
@@ -16,6 +21,19 @@ const Header = () => {
   const billsign = () => {
     path = "/billcheck";
     navigate(path);
+  };
+  const logouts = async () => {
+    try {
+      let response = await axios.post(
+        `${url}/api/v1/logout`,
+        {},
+        { withCredentials: true }
+      );
+      Dispatch(setLoginToggle(false));
+      console.log("resp", response);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="flex items-center justify-between px-2 lg:mx-4 border-b-4">
@@ -31,6 +49,9 @@ const Header = () => {
         </li>
         <li className="cursor-pointer hover:underline" onClick={billsign}>
           Bill Check
+        </li>
+        <li className="cursor-pointer hover:underline" onClick={logouts}>
+          Logout
         </li>
       </ul>
       <div className="space-y-1 lg:hidden">

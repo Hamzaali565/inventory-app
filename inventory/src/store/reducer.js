@@ -1,8 +1,9 @@
-import { BASE_URL, SET_LOGIN } from "./actionType";
+import { BASE_URL, SET_LOGIN, SET_LOGIN_TOGGLE } from "./actionType";
 
 const initialState = {
   login: null,
-  url: "http://192.168.3.105:3001",
+  url: "http://localhost:5001",
+  toggle: null,
 };
 
 export const mainReducer = (state = initialState, action) => {
@@ -11,6 +12,11 @@ export const mainReducer = (state = initialState, action) => {
       return {
         ...state,
         login: action.payload,
+      };
+    case SET_LOGIN_TOGGLE:
+      return {
+        ...state,
+        toggle: action.payload,
       };
     case BASE_URL:
       return {
