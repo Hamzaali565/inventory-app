@@ -54,10 +54,17 @@ const MainPage = () => {
   };
 
   const GetTables = async () => {
-    let response = await axios.get("http://localhost:5001/api/v1/getventory", {
-      withCredentials: true,
-    });
-    setData(response.data.data.reverse());
+    try {
+      let response = await axios.get(
+        "http://localhost:5001/api/v1/getventory",
+        {
+          withCredentials: true,
+        }
+      );
+      setData(response.data.data.reverse());
+    } catch (error) {
+      console.log(error);
+    }
   };
   const Edits = async () => {
     try {
