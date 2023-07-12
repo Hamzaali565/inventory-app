@@ -8,15 +8,54 @@ import LoginScreen from "./screens/login screen/LoginScreen";
 
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 import Splash from "./screens/SplashScreen/Splash";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { setLoginToggle } from "./store/action";
 import axios from "axios";
-
+import BarChart from "./components/Charts/BarChart";
+import Home from "./screens/HomeScreen/Home";
+const Data = [
+  {
+    id: 1,
+    year: 2016,
+    userGain: 8900,
+    userlose: 200,
+  },
+  {
+    id: 2,
+    year: 2017,
+    userGain: 8930,
+    userlose: 20,
+  },
+  {
+    id: 3,
+    year: 2018,
+    userGain: 2900,
+    userlose: 100,
+  },
+  {
+    id: 4,
+    year: 2019,
+    userGain: 1900,
+    userlose: 100,
+  },
+  {
+    id: 5,
+    year: 2020,
+    userGain: 800,
+    userlose: 900,
+  },
+  {
+    id: 6,
+    year: 2021,
+    userGain: 8900,
+    userlose: 200,
+  },
+];
 function App() {
   const Dispatch = useDispatch();
   useEffect(() => {
     CheckLog();
-    Dispatch(setLoginToggle(false));
+    // Dispatch(setLoginToggle(false));
   }, []);
 
   const LoginCheck = useSelector((state) => state.toggle);
@@ -35,19 +74,6 @@ function App() {
       Dispatch(setLoginToggle(false));
     }
   };
-  // const GetTables = async () => {
-  //   try {
-  //     let response = await axios.get(
-  //       "http://localhost:5001/api/v1/getventory",
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-  //     setData(response.data.data.reverse());
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
   return (
     <div>
       {LoginCheck === true ? (
@@ -55,6 +81,7 @@ function App() {
           <Route path="mainpage" element={<MainPage />} />
           <Route path="billing" element={<Billing />} />
           <Route path="billcheck" element={<BillCheck />} />
+          <Route path="/" element={<Home />} />
           <Route
             path="*"
             element={<Navigate to="/mainpage" replace={true} />}
@@ -67,12 +94,7 @@ function App() {
           <Route path="*" element={<Navigate to="/login" replace={true} />} />
         </Routes>
       ) : null}
-      {/* {LoginCheck === null ? <Splash /> : null} */}
-      {/* <MainPage /> */}
-      {/* <Billing /> */}
-      {/* <RoughWork /> */}
-      {/* <BillCheck /> */}
-      {/* <Splash /> */}
+      {LoginCheck === null ? <Splash /> : null}
     </div>
   );
 }

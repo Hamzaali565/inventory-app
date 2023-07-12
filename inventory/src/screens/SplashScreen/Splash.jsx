@@ -1,34 +1,32 @@
-import React, { useRef, useEffect } from "react";
-import Loader from "../../assets/VideoLoader/loader.mp4";
+import React, { useEffect, useRef } from "react";
+import lottie from "lottie-web";
+import animationData from "../../assets/VideoLoader/loader.json";
 
 const Splash = () => {
-  const videoRef = useRef(null);
+  const containerRef = useRef(null);
+  const animationRef = useRef(null);
 
   useEffect(() => {
-    const videoElement = videoRef.current;
-
-    const playVideo = () => {
-      videoElement.play();
-    };
-
-    const handleVideoEnd = () => {
-      videoElement.currentTime = 0; // Rewind the video to the beginning
-      playVideo();
-    };
-
-    videoElement.addEventListener("ended", handleVideoEnd);
-    playVideo();
+    animationRef.current = lottie.loadAnimation({
+      container: containerRef.current,
+      renderer: "svg",
+      loop: true,
+      autoplay: true,
+      animationData: animationData,
+    });
 
     return () => {
-      videoElement.removeEventListener("ended", handleVideoEnd);
+      animationRef.current.destroy();
     };
   }, []);
 
-  return (
-    <div className="flex justify-center items-center h-screen">
-      <video ref={videoRef} src={Loader} autoPlay muted loop playsInline />
-    </div>
-  );
+  useEffect(() => {
+    if (animationRef.current) {
+      animationRef.current.play();
+    }
+  }, []);
+
+  return <div ref={containerRef} className="h-96 mt-14" />;
 };
 
 export default Splash;

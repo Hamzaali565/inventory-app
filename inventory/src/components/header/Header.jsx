@@ -9,7 +9,6 @@ const Header = () => {
   const url = useSelector((state) => state.url);
   const Dispatch = useDispatch();
   let path;
-  const Home = () => {};
   const addVentory = () => {
     path = "/mainpage";
     navigate(path);
@@ -20,6 +19,10 @@ const Header = () => {
   };
   const billsign = () => {
     path = "/billcheck";
+    navigate(path);
+  };
+  const Home = () => {
+    path = "/";
     navigate(path);
   };
   const logouts = async () => {
