@@ -34,6 +34,11 @@ function Bill() {
       itemRefs.current[0].current.focus();
     }
   }, []);
+  useEffect(() => {
+    calculateProfit();
+    calculateTotalPrice();
+    console.log("profit", totalProfit);
+  }, [items]);
   const calculateProfit = () => {
     let totalProfit = 0;
 
@@ -64,6 +69,7 @@ function Bill() {
       total += price * quantity;
     });
     setTotalPrice(total);
+    console.log("price", totalPrice);
   };
 
   const calculateTotalCost = () => {
@@ -101,7 +107,7 @@ function Bill() {
     try {
       let response = await axios.post(
         "http://localhost:5001/api/v1/addBilling",
-        { data: items, totalPrice },
+        { data: items, totalPrice, profit: totalProfit },
         { withCredentials: true }
       );
       console.log(response.data.id);
@@ -137,7 +143,7 @@ function Bill() {
         newItem.price = foundItem.sellingPrice;
         newItem.id = foundItem.id;
       }
-      calculateTotalPrice();
+      // calculateTotalPrice();
     }
     if (field === "price") {
       price = newItem.price;
@@ -161,7 +167,7 @@ function Bill() {
       updatedItems.splice(index, 1);
     }
     setItems(updatedItems);
-    calculateTotalPrice();
+    // calculateTotalPrice();
   };
 
   const addNewLine = () => {

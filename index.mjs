@@ -303,16 +303,16 @@ app.put("/api/v1/updateventory", async (req, res) => {
 
 app.post("/api/v1/addBilling", async (req, res) => {
   try {
-    const { data, totalPrice } = req.body;
+    const { data, totalPrice, profit } = req.body;
     const { itemName, price, quantity } = data[0];
     // console.log(data[0].itemName);
-    if (![itemName, price, quantity, totalPrice].every(Boolean)) {
+    if (![itemName, price, quantity, totalPrice, profit].every(Boolean)) {
       res.status(400).send({ message: "parameters are missing" });
       return;
     }
     let AddBilling = connection.query(
       "INSERT INTO billing SET ?",
-      { data: JSON.stringify(data), totalPrice },
+      { data: JSON.stringify(data), totalPrice, profit },
       (err, result) => {
         console.log(result);
         if (!err) {
@@ -364,6 +364,25 @@ app.get("/api/v1/getbill/:id", async (req, res) => {
     );
   } catch (error) {
     res.status(400).send({ message: "server Error" });
+  }
+});
+app.get("/api/v1/getAllBills", async (req, res) => {
+  try {
+    let response = connection.query(
+      "SELECT * FROM billing",
+      (err, rows, fields) => {
+        if (!err) {
+          res.status(200).send({ data: rows });
+          return;
+        }
+        if (err) {
+          res.status(400).send({ message: "error" });
+          return;
+        }
+      }
+    );
+  } catch (error) {
+    res.status(400).send({ message: "Server Error" });
   }
 });
 // ======= //
