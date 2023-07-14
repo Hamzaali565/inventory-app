@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../header/Header";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import "./Chart.css";
 import moment from "moment";
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -56,12 +57,58 @@ const BarChart = () => {
   }, []);
   const data = {
     labels: value.map((item) => item.time),
+    // labels: [
+    //   "Mon",
+    //   "Tue",
+    //   "Wed",
+    //   "Thurs",
+    //   "Fri",
+    //   "Sat",
+    //   "Mon",
+    //   "Tue",
+    //   "Wed",
+    //   "Thurs",
+    // ],
     datasets: [
       {
         label: "Profit Of Last 10 Days",
         data: value.map((item) => item.profit),
-        backgroundColor: "aqua",
-        borderColor: "black",
+        // data: [
+        //   "3400",
+        //   "9000",
+        //   "4000",
+        //   "4900",
+        //   "8000",
+        //   "200",
+        //   "890",
+        //   "3000",
+        //   "1000",
+        //   "120",
+        // ],
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+          "rgba(255, 205, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(201, 203, 207, 0.2)",
+          "rgba(153, 103, 255, 0.2)",
+          "rgba(255, 151, 64, 0.2)",
+          "rgba(54, 163, 235, 0.2)",
+        ],
+        borderColor: [
+          "rgb(255, 99, 132)",
+          "rgb(255, 159, 64)",
+          "rgb(255, 205, 86)",
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+          "rgb(201, 203, 207)",
+          "rgb(153, 103, 255)",
+          "rgb(255, 151, 64)",
+          "rgb(54, 163, 235)",
+        ],
         borderWidth: 1,
       },
     ],
@@ -112,8 +159,10 @@ const BarChart = () => {
   return (
     <div>
       This is chart
-      <div className="" style={{ width: "400px" }}>
-        <Bar data={data} options={options}></Bar>
+      <div className="flex justify-center mt-10 ">
+        <div className="Chart">
+          <Bar data={data} options={options}></Bar>
+        </div>
       </div>
     </div>
   );
