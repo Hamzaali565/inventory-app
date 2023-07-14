@@ -44,16 +44,16 @@ function Bill() {
 
     items.forEach((item1) => {
       const matchingItem2 = data.find((item2) => item2.id === item1.id);
-      const price = parseFloat(item1.price);
-      const quantity = parseInt(item1.quantity);
+      const price = +parseFloat(item1.price);
+      const quantity = +parseInt(item1.quantity);
 
       if (matchingItem2) {
-        const costPrice = parseFloat(matchingItem2.costPrice);
+        const costPrice = +parseFloat(matchingItem2.costPrice);
         const itemProfit = (price - costPrice) * quantity;
         totalProfit += itemProfit;
       } else {
         const itemProfit = price * quantity;
-        totalProfit += itemProfit.toString();
+        totalProfit += itemProfit;
       }
     });
 

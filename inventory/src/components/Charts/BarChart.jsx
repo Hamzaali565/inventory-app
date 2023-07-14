@@ -23,36 +23,6 @@ const BarChart = () => {
         withCredentials: true,
       });
       let data = response.data.data;
-      // let myData = await response.data.data
-      //   .slice(response.data.data.length - 10)
-      //   .map((item) => ({
-      //     profit: item.profit,
-      //     // time: item.createdTime,
-      //     time: moment(item.createdTime).format("dddd"),
-      //   }));
-      // setValue(myData);
-      // console.log("myData", myData, value);
-      // console.log(response.data);
-      // const groupedData = Object.values(data).reduce((result, item) => {
-      //   const { createdTime, profit } = item;
-      //   if (!createdTime || !profit) {
-      //     return result;
-      //   }
-
-      //   const existingItem = result.find(
-      //     (group) => group.createdTime === createdTime
-      //   );
-      //   if (existingItem) {
-      //     existingItem.profit += Number(profit);
-      //   } else {
-      //     result.push({ createdTime, profit: Number(profit) });
-      //   }
-
-      //   return result;
-      // }, []);
-      //  let billData = data.map{}
-
-      // console.log(groupedData);
       let newData = await data.map((item) => ({
         time: moment(item.createdTime).format("ddd"),
         profit: item.profit,
@@ -89,7 +59,6 @@ const BarChart = () => {
     datasets: [
       {
         label: "Profit Of Last 10 Days",
-        // data: [3, 6, 9, 12, 6, 9, 12, 6, 9, 12, 6, 9, 12, 6, 9, 12],
         data: value.map((item) => item.profit),
         backgroundColor: "aqua",
         borderColor: "black",
@@ -97,24 +66,54 @@ const BarChart = () => {
       },
     ],
   };
-
-  // const CheckLog = async () => {
-  //   try {
-  //     let response = await axios.get(`${url}/api/v1/getventory`, {
-  //       withCredentials: true,
-  //     });
-  //     console.log("ghgh", response);
-  //     Dispatch(setLoginToggle(true));
-  //   } catch (error) {
-  //     console.log(error);
-  //     Dispatch(setLoginToggle(false));
-  //   }
-  // };
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: {
+          display: true,
+          borderColor: "rgba(0, 0, 0, 0.1)",
+          borderWidth: 1,
+        },
+        ticks: {
+          font: {
+            family: "Arial, sans-serif",
+            size: 12,
+            weight: "bold",
+          },
+        },
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          font: {
+            family: "Arial, sans-serif",
+            size: 12,
+            weight: "bold",
+          },
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        // position: "top",
+        labels: {
+          font: {
+            family: "Arial, sans-serif",
+            size: 14,
+            weight: "bold",
+          },
+        },
+      },
+    },
+  };
   return (
     <div>
       This is chart
       <div className="" style={{ width: "400px" }}>
-        <Bar data={data}></Bar>
+        <Bar data={data} options={options}></Bar>
       </div>
     </div>
   );
