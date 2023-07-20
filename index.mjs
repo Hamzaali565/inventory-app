@@ -1,6 +1,7 @@
 import bodyParser from "body-parser";
 import express, { query } from "express";
 import mysql from "mysql";
+import util from "util";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
@@ -27,6 +28,7 @@ const connection = mysql.createConnection({
   password: process.env.PASSWORD,
   database: process.env.DATABASE,
 });
+const queryPromise = util.promisify(connection.query).bind(connection);
 const SECRET = process.env.SECRET || "topsecret";
 //
 app.post("/api/v1/signup", async (req, res) => {
@@ -366,6 +368,7 @@ app.get("/api/v1/getbill/:id", async (req, res) => {
     res.status(400).send({ message: "server Error" });
   }
 });
+
 app.get("/api/v1/getAllBills", async (req, res) => {
   try {
     let response = connection.query(
@@ -381,6 +384,63 @@ app.get("/api/v1/getAllBills", async (req, res) => {
         }
       }
     );
+  } catch (error) {
+    res.status(400).send({ message: "Server Error" });
+  }
+});
+
+app.put("/api/v1/resolve", async (req, res) => {
+  try {
+    const { data, totalPrice, profit } = req.body;
+    const { itemName, price, quantity } = data[0];
+    // // console.log(data[0].itemName);
+    if (![itemName, price, quantity, totalPrice, profit].every(Boolean)) {
+      res.status(400).send({ message: "parameters are missing" });
+      return;
+    }
+
+    const rows = await queryPromise("SELECT * FROM addventory");
+    const newData = data.filter((item) =>
+      rows.some((row) => row.id === item.id)
+    );
+    console.log("newData", newData);
+    // console.log("rows", rows);
+    // return;
+    for (const eachItem of newData) {
+      const eachRow = rows.find((row) => row.id === eachItem.id);
+
+      if (!eachRow) {
+        res
+          .status(400)
+          .send({ message: `No matching row found for id ${eachItem.id}` });
+
+        return;
+      }
+
+      const quantityDiff =
+        parseInt(eachRow.quantity) - parseInt(eachItem.quantity);
+      if (quantityDiff < 0) {
+        res
+          .status(400)
+          .send({ message: `Quantity error for id ${eachItem.id}` });
+        return;
+      }
+
+      const result = connection.query("UPDATE addventory SET ? WHERE id = ?", [
+        { quantity: quantityDiff.toString() },
+        eachItem.id,
+      ]);
+
+      if (result.affectedRows < 1) {
+        res
+          .status(400)
+          .send({ message: `Data not found for id ${eachItem.id}` });
+        return;
+      }
+    }
+
+    res.status(200).send({ message: "Data updated successfully" });
+    return;
   } catch (error) {
     res.status(400).send({ message: "Server Error" });
   }

@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import Auto from "../autocomplete/Auto";
+import { useSelector } from "react-redux";
 // const data = [
 //   { itemName: "kenwood", price: 300 },
 //   { itemName: "hamza", price: 600 },
@@ -28,6 +29,7 @@ function Bill() {
   const [items, setItems] = useState([
     { itemName: "", price: "", quantity: "" },
   ]);
+
   useEffect(() => {
     allData();
     if (itemRefs.current.length > 0) {
@@ -39,6 +41,9 @@ function Bill() {
     calculateTotalPrice();
     console.log("profit", totalProfit);
   }, [items]);
+
+  const url = useSelector((state) => state.url);
+
   const calculateProfit = () => {
     let totalProfit = 0;
 
@@ -106,7 +111,7 @@ function Bill() {
     console.log(totalPrice);
     try {
       let response = await axios.post(
-        "http://localhost:5001/api/v1/addBilling",
+        `${url}/api/v1/addBilling`,
         { data: items, totalPrice, profit: totalProfit },
         { withCredentials: true }
       );
@@ -115,6 +120,20 @@ function Bill() {
 
       // setItems([{ itemName: "", price: "", quantity: "", id: "" }]);
       // setTotalPrice("0");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const Resolve = async () => {
+    try {
+      const Response = await axios.put(
+        `${url}/api/v1/resolve`,
+        { data: items, totalPrice, profit: totalProfit },
+        { withCredentials: true }
+      );
+      console.log(Response);
+      Push();
     } catch (error) {
       console.log(error);
     }
@@ -225,7 +244,7 @@ function Bill() {
           {/* <button onClick={addNewLine}>Change Line</button> */}
           <div className="flex justify-center">
             <button
-              onClick={Push}
+              onClick={Resolve}
               className="border py-2 px-3 rounded-2xl bg-green-400 font-bold text-white"
             >
               Print
@@ -264,6 +283,7 @@ function Bill() {
           </div>
         </div>
       </div>
+      <button onClick={Resolve}>Butt</button>
     </div>
   );
 }
