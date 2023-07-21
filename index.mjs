@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
+import path from "path";
 
 const app = express();
 const PORT = 5001;
@@ -447,6 +448,12 @@ app.put("/api/v1/resolve", async (req, res) => {
   }
 });
 // ======= //
+
+const __dirname = path.resolve();
+app.use("/", express.static(path.join(__dirname, "./inventory/build")));
+app.use("*", express.static(path.join(__dirname, "./inventory/build")));
+
+//------//
 connection.connect((err) => {
   if (err) console.log(`Database connection failed ${err}`);
   console.log("connection successfull..");
