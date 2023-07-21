@@ -3,29 +3,33 @@ import Header from "../../components/header/Header";
 import AddInput from "../../components/AddInput/AddInput";
 import axios from "axios";
 import { Button } from "@mui/material";
+import { ErrorToast, SuccessToast } from "../../components/Toastify/Toast";
+import ToastHook from "../../components/Toastify/ToastHook";
+import { useSelector } from "react-redux";
 
 const BillCheck = () => {
   const [id, setId] = useState("");
   const [res, setRes] = useState([]);
   const [oRes, setORes] = useState([]);
 
+  const url = useSelector((state) => state.url);
+
   const Data = async (e) => {
     e.preventDefault();
     try {
-      let responce = await axios.get(
-        `http://localhost:5001/api/v1/getbill/${id}`,
-        { withCredentials: true }
-      );
-      console.log(responce?.data);
+      let responce = await axios.get(`${url}/api/v1/getbill/${id}`, {
+        withCredentials: true,
+      });
+      // console.log(responce?.data);
       setRes(responce?.data.data);
       setORes(responce?.data);
+      SuccessToast(responce.data.message);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      ErrorToast(error.response.data.message);
     }
   };
-  //   let check = () => {
-  //     console.log("oRes", res.id);
-  //   };
+
   return (
     <div>
       <Header />
@@ -81,6 +85,7 @@ const BillCheck = () => {
           </div>
         </div>
       </div>
+      <ToastHook />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import invImage from "../../assets/images/inventory.png";
 import invImage1 from "../../assets/images/inv.png";
 
@@ -8,10 +8,19 @@ import axios from "axios";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoginToggle } from "../../store/action";
+import "react-toastify/dist/ReactToastify.css";
+import { ErrorToast } from "../../components/Toastify/Toast";
+import ToastHook from "../../components/Toastify/ToastHook";
+
 const LoginScreen = () => {
+  const [message, setMessage] = useState("");
   const Dispatch = useDispatch();
   // const Selector = useSelector();
   const check = useSelector((state) => state.toggle);
+  const url = useSelector((state) => state.url);
+  const Message = (data) => {
+    ErrorToast(data);
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -25,7 +34,7 @@ const LoginScreen = () => {
     onSubmit: async (values, { resetForm }) => {
       console.log("ok", values);
       await submit(values);
-      await resetForm();
+      resetForm();
     },
   });
 
@@ -33,7 +42,7 @@ const LoginScreen = () => {
     try {
       console.log("val", values.password);
       let responce = await axios.post(
-        `http://localhost:5001/api/v1/login`,
+        `${url}/api/v1/login`,
         {
           email: values.email,
           password: values.password,
@@ -42,12 +51,14 @@ const LoginScreen = () => {
           withCredentials: true,
         }
       );
-      console.log("responce", responce);
+      // console.log("responce", responce);
       Dispatch(setLoginToggle(true));
-      console.log(check);
+      // console.log(check);
     } catch (error) {
-      console.log("err", error);
-      console.log(check);
+      // setMessage(error.response.data.message);
+      // console.log("err", error.response.data.message);
+      // console.log(check);
+      Message(error.response.data.message);
     }
   };
   return (
@@ -109,6 +120,7 @@ const LoginScreen = () => {
           </div>
         </div>
       </div>
+      <ToastHook />
     </div>
   );
 };

@@ -2,14 +2,8 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import Auto from "../autocomplete/Auto";
 import { useSelector } from "react-redux";
-// const data = [
-//   { itemName: "kenwood", price: 300 },
-//   { itemName: "hamza", price: 600 },
-// ];
-// const initialItems = [
-//   { id: 5, itemName: "kenwood", price: "20", quantity: 4 },
-//   { id: 14, itemName: "Pioneer", price: "13000", quantity: "3" },
-// ];
+import { ErrorToast, SuccessToast } from "../Toastify/Toast";
+import ToastHook from "../Toastify/ToastHook";
 function Bill() {
   const [itemName, setItemName] = useState("");
   const [price, setPrice] = useState("");
@@ -21,7 +15,6 @@ function Bill() {
   const [data, setData] = useState([]);
   const itemRefs = useRef([]);
 
-  // const [itemsa] = useState(initialItems);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
@@ -39,7 +32,7 @@ function Bill() {
   useEffect(() => {
     calculateProfit();
     calculateTotalPrice();
-    console.log("profit", totalProfit);
+    // console.log("profit", totalProfit);
   }, [items]);
 
   const url = useSelector((state) => state.url);
@@ -62,7 +55,7 @@ function Bill() {
       }
     });
 
-    console.log("Profit:", totalProfit);
+    // console.log("Profit:", totalProfit);
     setTotalProfit(totalProfit);
   };
 
@@ -74,7 +67,7 @@ function Bill() {
       total += price * quantity;
     });
     setTotalPrice(total);
-    console.log("price", totalPrice);
+    // console.log("price", totalPrice);
   };
 
   const calculateTotalCost = () => {
@@ -91,20 +84,19 @@ function Bill() {
       }
     });
 
-    console.log("Total Cost:", totalCost);
+    // console.log("Total Cost:", totalCost);
     setTotalCost(totalCost);
   };
 
   const allData = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5001/api/v1/getventory",
-        { withCredentials: true }
-      );
-      console.log(response);
+      const response = await axios.get(`${url}/api/v1/getventory`, {
+        withCredentials: true,
+      });
+      // console.log(response);
       setData(response.data.data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   const Push = async () => {
@@ -115,13 +107,14 @@ function Bill() {
         { data: items, totalPrice, profit: totalProfit },
         { withCredentials: true }
       );
-      console.log(response.data.id);
+      // console.log(response.data.id);
       setBillId(response.data.id);
-
+      SuccessToast(response.data.message);
       // setItems([{ itemName: "", price: "", quantity: "", id: "" }]);
       // setTotalPrice("0");
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      ErrorToast(error.response.data.message);
     }
   };
 
@@ -132,10 +125,10 @@ function Bill() {
         { data: items, totalPrice, profit: totalProfit },
         { withCredentials: true }
       );
-      console.log(Response);
+      // console.log(Response);
       Push();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -158,7 +151,7 @@ function Bill() {
       const foundItem = data.find((item) => item.itemName === newItem.itemName);
       newItem.quantity = 1;
       if (foundItem) {
-        console.log(foundItem.sellingPrice);
+        // console.log(foundItem.sellingPrice);
         newItem.price = foundItem.sellingPrice;
         newItem.id = foundItem.id;
       }
@@ -166,7 +159,7 @@ function Bill() {
     }
     if (field === "price") {
       price = newItem.price;
-      console.log(price);
+      // console.log(price);
       calculateTotalPrice();
       // calculateTotalPrice();
     }
@@ -283,7 +276,7 @@ function Bill() {
           </div>
         </div>
       </div>
-      <button onClick={Resolve}>Butt</button>
+      <ToastHook />
     </div>
   );
 }

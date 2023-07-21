@@ -67,10 +67,10 @@ function App() {
       let response = await axios.get(`${url}/api/v1/getventory`, {
         withCredentials: true,
       });
-      console.log("ghgh", response);
+      // console.log("ghgh", response);
       Dispatch(setLoginToggle(true));
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       Dispatch(setLoginToggle(false));
     }
   };

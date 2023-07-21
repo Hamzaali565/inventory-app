@@ -6,6 +6,8 @@ import { BiEditAlt } from "react-icons/bi";
 import NestedModal from "../../components/Modal/Modal";
 import Header from "../../components/header/Header";
 import { useSelector } from "react-redux";
+import { ErrorToast, SuccessToast } from "../../components/Toastify/Toast";
+import ToastHook from "../../components/Toastify/ToastHook";
 
 const MainPage = () => {
   const [itemName, setItemName] = useState("");
@@ -20,7 +22,7 @@ const MainPage = () => {
   const [open, setOpen] = React.useState(false);
 
   const url = useSelector((state) => state.url);
-  console.log("uuuu", url);
+  // console.log("uuuu", url);
 
   useEffect(() => {
     GetTables();
@@ -37,7 +39,7 @@ const MainPage = () => {
     event.preventDefault();
     try {
       let response = await axios.post(
-        "http://localhost:5001/api/v1/addventory",
+        `${url}/api/v1/addventory`,
         {
           itemName,
           sellingPrice,
@@ -49,31 +51,30 @@ const MainPage = () => {
           withCredentials: true,
         }
       );
-      console.log("response", response);
+      // console.log("response", response.data.message);
+      SuccessToast(response.data.message);
       setToggle(!toggle);
       Empty();
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error.response.data.message);
+      ErrorToast(error.response.data.message);
     }
   };
 
   const GetTables = async () => {
     try {
-      let response = await axios.get(
-        "http://localhost:5001/api/v1/getventory",
-        {
-          withCredentials: true,
-        }
-      );
+      let response = await axios.get(`${url}/api/v1/getventory`, {
+        withCredentials: true,
+      });
       setData(response.data.data.reverse());
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   const Edits = async () => {
     try {
       let response = await axios.put(
-        `http://localhost:5001/api/v1/updateventory`,
+        `${url}/api/v1/updateventory`,
         {
           itemName,
           sellingPrice,
@@ -84,24 +85,25 @@ const MainPage = () => {
         },
         { withCredentials: true }
       );
-      console.log(response);
+      // console.log(response);
       Empty();
+      SuccessToast(response.data.message);
       setOpen(false);
     } catch (error) {
-      console.log("err", error);
+      // console.log("err", error);
     }
   };
   const Deletes = async (id) => {
-    console.log("id", id);
+    // console.log("id", id);
     try {
-      let response = await axios.delete(
-        `http://localhost:5001/api/v1/delventory/${id}`,
-        { withCredentials: true }
-      );
-      console.log("response", response);
+      let response = await axios.delete(`${url}/api/v1/delventory/${id}`, {
+        withCredentials: true,
+      });
+      // console.log("response", response);
+      SuccessToast(response.data.message);
       setToggle(!toggle);
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
     }
   };
 
@@ -117,7 +119,7 @@ const MainPage = () => {
     setCostPrice(item.costPrice);
     setId(item.id);
     setOpen(true);
-    console.log(item.model);
+    // console.log(item.model);
   };
   const handleClose = () => {
     setOpen(false);
@@ -254,6 +256,7 @@ const MainPage = () => {
           setQty(value);
         }}
       />
+      <ToastHook />
     </div>
   );
 };

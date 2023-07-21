@@ -25,10 +25,10 @@ const BarChart = () => {
       });
       let data = response.data.data;
       let newData = await data.map((item) => ({
-        time: moment(item.createdTime).format("ddd"),
+        time: moment(item.createdTime).format("YYYY-MM-DD"),
         profit: item.profit,
       }));
-      console.log("newData", newData);
+      // console.log("newData", newData);
 
       const groupedData = Object.values(newData).reduce((result, item) => {
         const { time, profit } = item;
@@ -46,10 +46,10 @@ const BarChart = () => {
         return result;
       }, []);
 
-      console.log("groupedData", groupedData);
+      // console.log("groupedData", groupedData);
       setValue(groupedData);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   useEffect(() => {

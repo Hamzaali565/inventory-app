@@ -33,9 +33,9 @@ const Header = () => {
         { withCredentials: true }
       );
       Dispatch(setLoginToggle(false));
-      console.log("resp", response);
+      // console.log("resp", response);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   return (

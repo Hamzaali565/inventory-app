@@ -319,7 +319,7 @@ app.post("/api/v1/addBilling", async (req, res) => {
         console.log(result);
         if (!err) {
           res.status(200).send({
-            message: "data inserted Succesfully",
+            message: "Bill Created Succesfully",
             id: result.insertId,
           });
           // console.log("result", result);
@@ -357,6 +357,7 @@ app.get("/api/v1/getbill/:id", async (req, res) => {
           data: JSON.parse(rows[0].data),
           id: rows[0].id,
           createdTime: rows[0].createdTime,
+          message: "Data Found Successfully",
           totalPrice:
             rows[0].totalPrice == ""
               ? (rows[0].totalPrice = 0)
